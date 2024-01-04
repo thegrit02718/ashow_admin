@@ -45,7 +45,9 @@ function EnrollImagePanel({ dispatch, state, category }: ImagePanelProps) {
 
         if (file) {
           // 파일 확장자 유효성 검사
-          checkFileValidity(category, file);
+          if (!checkFileValidity(category, file)) {
+            return;
+          }
           const reader = new FileReader();
 
           reader.onloadend = () => {
