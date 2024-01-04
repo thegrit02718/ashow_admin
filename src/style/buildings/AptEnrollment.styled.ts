@@ -204,7 +204,8 @@ export const Calendar = styled.div`
 
 export const Btn = styled.button`
   padding: 10px 20px;
-  width: 80px;
+  width: 140px;
+  height: 45px;
   border-radius: 3px;
   font-size: 13px;
   letter-spacing: 1px;
