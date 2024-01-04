@@ -9,7 +9,7 @@ export interface PyeongModalProps {
   minusOption: number;
 }
 
-export interface ModalStateProps<T = Record<string, unknown>> {
+export interface AddressModalProps<T = Record<string, unknown>> {
   address: T;
 }
 
