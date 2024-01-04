@@ -1,0 +1,48 @@
+.react-calendar__month-view > div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 20px 0;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  text-align: center;
+}
+.react-calendar__navigation {
+  margin-bottom: 20px;
+  display: flex;
+  margin-bottom: 20px;
+}
+.react-calendar__year-view__months__month {
+  width: 20px;
+  height: 50px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.react-calendar__navigation__label__labelText {
+  font-size: 16px;
+  color: #e8726e;
+  font-weight: 600;
+}
+.month-indicator {
+  display: none;
+}
+.react-calendar__navigation__arrow {
+  font-size: 20px;
+  color: #e8726e;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  font-size: 12px;
+}
+
+.react-calendar__month-view__days__day {
+  width: 20px;
+  height: 40px;
+  font-family: ;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.weekend-day {
+  color: #e6110a;
+}
