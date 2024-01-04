@@ -3,7 +3,7 @@ import { ComponentProps } from "../../../../types/types";
 import SectionTitle from "../../../molecule/SectionTitle";
 import * as Component from "../../../../style/buildings/AptEnrollment.styled";
 import InputField from "../../../molecule/InputField";
-import { ModalStateProps } from "../../../../types/Modal";
+import { AddressModalProps } from "../../../../types/Modal";
 import { useRecoilState } from "recoil";
 import { modalsState } from "../../../../recoil/stateModal";
 import { NaverMap } from "./NaverMap";
@@ -14,7 +14,7 @@ function PromotionSection({ state, dispatch }: ComponentProps) {
   const [modalState, setModalState] = useRecoilState(modalsState);
 
   const [adrressState, setAdrressState] =
-    useRecoilState<ModalStateProps<RecoilProps>>(AdrressState);
+    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
   const { promotionSite } = adrressState.address;
   const SearchEventHandler = () => {
     setModalState({

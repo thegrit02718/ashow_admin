@@ -11,7 +11,7 @@ import { modalsState } from "../../../../recoil/stateModal";
 import dayjs from "dayjs";
 import { Action } from "../../../../types/Reducer";
 import "../../../../style/buildings/calendar.css";
-import { ModalStateProps } from "../../../../types/Modal";
+import { AddressModalProps } from "../../../../types/Modal";
 import { RecoilProps } from "../../../../types/Modal";
 import { AdrressState } from "../../../../recoil/stateProduct";
 
@@ -23,7 +23,7 @@ interface ProductInfoForm {
 function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
   const [modalState, setModalState] = useRecoilState(modalsState);
   const [adrressState, setAdrressState] =
-    useRecoilState<ModalStateProps<RecoilProps>>(AdrressState);
+    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
   const address = adrressState.address.address;
   const [isPopup, setIsPopup] = useState(false);
 

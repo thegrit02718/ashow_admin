@@ -5,13 +5,13 @@ import * as Modal from "../../style/modal/AddressModal.styled";
 import { useRecoilState } from "recoil";
 import { modalsState } from "../../recoil/stateModal";
 import { AdrressState } from "../../recoil/stateProduct";
-import { ModalStateProps } from "../../types/Modal";
+import { AddressModalProps } from "../../types/Modal";
 import { RecoilProps } from "../../types/Modal";
 
 function AddressSearchModal({ ...props }) {
   const [modalState, setModalState] = useRecoilState(AdrressState);
   const [adrressState, setAdrressState] =
-    useRecoilState<ModalStateProps<RecoilProps>>(AdrressState);
+    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
   const { type } = props;
   const reset = useResetRecoilState(modalsState);
 

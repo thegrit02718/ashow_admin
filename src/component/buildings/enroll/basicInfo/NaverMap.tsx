@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { modalsState } from "../../../../recoil/stateModal";
-import { ModalStateProps } from "../../../../types/Modal";
+import { AddressModalProps } from "../../../../types/Modal";
 import { getCoordinates } from "../../../../util/naverMap";
 import { AdrressState } from "../../../../recoil/stateProduct";
 import { RecoilProps } from "../../../../types/Modal";
@@ -14,7 +14,7 @@ interface NaverMapProps {
 export function NaverMap({ id, type }: NaverMapProps) {
   const { naver } = window;
   const [addressState, setAdrressState] =
-    useRecoilState<ModalStateProps<RecoilProps>>(AdrressState);
+    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
   const address = addressState.address[type];
   const [myLocation, setMyLocation] = useState({
     latitude: 37.4979517,
