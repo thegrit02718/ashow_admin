@@ -60,12 +60,13 @@ export function checkFileValidity(category: string, file: File) {
     alert(
       `업로드 가능한 확장자가 아닙니다. [가능한 확장자 : ${ALLOW_FILE_EXTENSION}]`
     );
-    return;
+    return false;
   }
 
   // 파일 용량 체크
   if (file.size > maxFileSize) {
     alert(`업로드 가능한 최대 용량은 ${maxFileSize / 1024}MB입니다.`);
-    return;
+    return false;
   }
+  return true;
 }
