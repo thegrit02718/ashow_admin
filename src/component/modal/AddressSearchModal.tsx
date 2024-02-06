@@ -7,11 +7,12 @@ import { modalsState } from "../../recoil/stateModal";
 import { AdrressState } from "../../recoil/stateProduct";
 import { AddressModalProps } from "../../types/Modal";
 import { RecoilProps } from "../../types/Modal";
+import { useSetRecoilState } from "recoil";
+import { aptBasicInfoState } from "../../recoil/stateProduct";
 
 function AddressSearchModal({ ...props }) {
-  const [modalState, setModalState] = useRecoilState(AdrressState);
-  const [adrressState, setAdrressState] =
-    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
+  const setAptBaiscInfo = useSetRecoilState(aptBasicInfoState);
+  const setAdrressState = useSetRecoilState(AdrressState);
   const { type } = props;
   const reset = useResetRecoilState(modalsState);
 
@@ -24,13 +25,15 @@ function AddressSearchModal({ ...props }) {
     } else {
       fullAddress = data.roadAddress;
     }
-    setAdrressState((prev: any) => ({
+    setAdrressState((prev) => ({
       ...prev,
-      address: {
-        ...prev.address,
-        [type]: fullAddress,
-      },
+      [type]: fullAddress,
     }));
+    setAptBaiscInfo((prev) => ({
+      ...prev,
+      [type]: fullAddress,
+    }));
+
     reset();
   };
   return (

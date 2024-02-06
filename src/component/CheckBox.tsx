@@ -1,6 +1,6 @@
 import { SetStateAction, useContext } from "react";
 import { CheckboxContext } from "./CheckboxGroup";
-import * as Admin from "../../style/buildings/Building.styled";
+import * as Admin from "../style/buildings/Building.styled";
 interface CheckBoxProps {
   disabled?: boolean;
   checked?: boolean;
@@ -34,7 +34,6 @@ export default function Checkbox({
         <Admin.CheckBox
           id="check"
           onClick={() => {
-            console.log(checked);
             toggleValue({ checked, value });
           }}
         >

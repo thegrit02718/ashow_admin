@@ -28,6 +28,7 @@ function App() {
           <Route element={<PrivateRoutes authentication={false} />}>
             <Route path="/buildings/enroll" element={<AptEnrollment />} />
           </Route>
+
           <Route element={<PrivateRoutes authentication={true} />}>
             <Route path="/user" element={<User />} />
           </Route>

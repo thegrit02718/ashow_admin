@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useContext } from "react";
 import { InputContext } from "../../molecule/InputField";
 import * as Component from "../../../style/component/inputfiled/InputFiled.styled";
@@ -12,8 +12,16 @@ interface RadioboxProps {
 
 function RadioBox({ name, id = 1, defaultChecked, children }: RadioboxProps) {
   const context = useContext(InputContext);
+  useEffect(() => {
+    if (context && defaultChecked) {
+      context.setState((prev: any) => ({
+        ...prev,
+        [context.type as string]: children,
+      }));
+    }
+  }, []);
   if (context) {
-    const { actionType, dispatch } = context;
+    const { state, setState, type } = context;
     return (
       <Component.Label htmlFor={String(id)}>
         <Component.Radio
@@ -22,7 +30,10 @@ function RadioBox({ name, id = 1, defaultChecked, children }: RadioboxProps) {
           defaultChecked={defaultChecked}
           id={String(id)}
           onChange={(e) =>
-            dispatch({ type: actionType, payload: e.target.value })
+            setState((prev: any) => ({
+              ...prev,
+              [type as string]: children,
+            }))
           }
         />
         <span className="on"></span>

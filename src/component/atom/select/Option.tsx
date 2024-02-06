@@ -17,12 +17,14 @@ export const Option: React.FC<OptionsProps> = ({ value }) => {
   }
 
   if (context) {
-    const { selected, setSelected, toggleOptionsVisibility } = context;
+    const { state, setState, setSelected, toggleOptionsVisibility, type } =
+      context;
 
     return (
       <Li
         onClick={() => {
           setSelected(value);
+          setState((prev: any) => ({ ...prev, [type as string]: value }));
           toggleOptionsVisibility();
         }}
       >

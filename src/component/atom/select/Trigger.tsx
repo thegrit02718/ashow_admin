@@ -1,29 +1,26 @@
-import { useContext, useEffect, useReducer } from "react";
-import { useRecoilState } from "recoil";
+import { useContext, useEffect } from "react";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 import styled from "styled-components";
 import { SelectContext } from "../../molecule/Select";
-import { reducer, initialState } from "../../../reducer/aptBasicInfoReducer";
-import { dispatchAction } from "../../../util/dispatchAction";
 
 export default function Trigger() {
   const context = useContext(SelectContext);
 
   useEffect(() => {
-    if (
-      context?.dispatch &&
-      context?.selected !== "선택하세요" &&
-      context.selected
-    ) {
-      dispatchAction(context?.dispatch, context.type, context.selected);
+    if (context?.selected !== "선택하세요" && context?.selected) {
+      context.setState((prev: any) => ({
+        ...prev,
+        [context?.type]: context.selected,
+      }));
     }
   }, [context?.selected]);
   if (context) {
-    const { selected, setSelected, toggleOptionsVisibility } = context;
+    const { state, type, selected, setSelected, toggleOptionsVisibility } =
+      context;
 
     return (
       <Wrapper onClick={toggleOptionsVisibility}>
-        <TriggerText>{selected}</TriggerText>
+        <TriggerText>{state[type] || selected}</TriggerText>
         <TriggetIcon />
       </Wrapper>
     );

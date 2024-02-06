@@ -5,18 +5,25 @@ import { RiMore2Fill } from "react-icons/ri";
 import { MdModeEditOutline } from "react-icons/md";
 import { AiFillDelete } from "react-icons/ai";
 import { IoMdInformationCircleOutline } from "react-icons/io";
+import { MdCheckBox } from "react-icons/md";
+import { IoSquareOutline } from "react-icons/io5";
 
 type TextAlign = "right" | "center" | "left";
 type TextInputProps = {
   $textalign?: TextAlign;
 };
 
-export const Board = styled.div`
-  max-width: 930px;
+export const Wrapper = styled.div`
+  display: flex;
+  position: relative;
+`;
+
+export const Board = styled.div<{ $width?: number }>`
+  max-width: ${(props) => (props.$width ? props.$width + "px" : "930px")};
+  width: 100%;
   background: #fff;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   &::-webkit-scrollbar {
     display: none;
   }
@@ -29,14 +36,14 @@ export const SectionTitle = styled.p`
 `;
 export const Section = styled.div`
   display: grid;
-  gap: 60px;
+  gap: 70px;
   grid-template-columns: repeat(1, 1fr);
 `;
 
 export const FlexRow = styled.div`
   display: flex;
   width: 100%;
-  gap: 32px;
+  gap: 24px;
 `;
 
 export const UnitContainer = styled.div`
@@ -261,13 +268,14 @@ export const AddIcon = styled(FaPlus)`
 `;
 
 export const Th = styled.th<{ width?: string }>`
-  width: ${(props) => (props.width ? props.width : "100px")};
+  width: fit-content;
+  width: ${(props) => (props.width ? props.width : "70px")};
   justify-content: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 10px 10px;
+  padding: 10px 5px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.WhiteBorder};
-  padding: 10px;
+  padding: 10px 5px;
   background: #eff0d6;
 `;
 export const ThTitle = styled.p``;
@@ -340,4 +348,23 @@ export const InfoIcon = styled(IoMdInformationCircleOutline)`
   color: ${({ theme }) => theme.colors.black};
   font-size: 20px;
   cursor: pointer;
+`;
+
+export const Label = styled.label`
+  display: flex;
+  justify-content: center;
+`;
+export const CheckBox = styled.div`
+  width: 20px;
+  height: 20px;
+`;
+export const Checked = styled(MdCheckBox)`
+  width: 20px;
+  height: 20px;
+  color: ${({ theme }) => theme.colors.MainColor};
+`;
+export const Unchecked = styled(IoSquareOutline)`
+  width: 100%;
+  height: 100%;
+  color: ${({ theme }) => theme.colors.black};
 `;

@@ -8,17 +8,18 @@ import { RecoilProps } from "../../../../types/Modal";
 
 interface NaverMapProps {
   id: string;
-  type: string;
+  type: "address" | "promotionSite";
 }
 
 export function NaverMap({ id, type }: NaverMapProps) {
   const { naver } = window;
-  const [addressState, setAdrressState] =
-    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
-  const address = addressState.address[type];
+  const [aptBasicState, setAptBasicState] = useRecoilState(AdrressState);
+
+  const address = aptBasicState[type];
+
   const [myLocation, setMyLocation] = useState({
-    latitude: 37.4979517,
-    longitude: 127.0276188,
+    latitude: 35.8378492,
+    longitude: 128.6220597,
   });
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export function NaverMap({ id, type }: NaverMapProps) {
       if (address) {
         try {
           const { x, y } = await getCoordinates(address); // 주소로 위도, 경도 구하는 함수 실행
+
           setMyLocation({
             latitude: y,
             longitude: x,

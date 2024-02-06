@@ -10,7 +10,7 @@ const theme: DefaultTheme = {
     grey3: "#EFEFEF",
     grey4: "#DFDFDF",
     grey5: "#C1C1C1",
-    GreyScale1: "#2f3844",
+    GreyScale1: "#2F3844",
     Greyscale3: "#77818F",
     Greyscale4: "#BBC1C8",
     blue: "#0094FF",
@@ -22,7 +22,6 @@ const theme: DefaultTheme = {
     DarkBorder: "#5c626a",
     WhiteBorder: "#d1d1d1",
     PageTitleColor: "#1B222B",
-    SectionTitleColor: "#2F3844",
     SectionTitleBolrder: "#F0A3A180",
   },
   inputField: {

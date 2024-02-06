@@ -10,13 +10,13 @@ export const Wrapper = styled.div`
 
 export const Title = styled.p`
   font-size: 20px;
-  color: ${({ theme }) => theme.colors.SectionTitleColor};
+  color: ${({ theme }) => theme.colors.GreyScale1};
   font-weight: 600;
 `;
 
 export const SubTitle = styled.p`
   font-size: 13px;
-  color: ${({ theme }) => theme.colors.SectionTitleColor};
+  color: ${({ theme }) => theme.colors.GreyScale1};
 `;
 
 export const Container = styled.div`
@@ -31,6 +31,6 @@ export const Button = styled.button`
 
   gap: 0 4px;
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.SectionTitleColor};
+  color: ${({ theme }) => theme.colors.GreyScale1};
   font-weight: 600;
 `;

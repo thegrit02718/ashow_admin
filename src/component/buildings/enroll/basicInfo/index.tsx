@@ -1,69 +1,86 @@
-import React, { useReducer } from "react";
+import React, { useReducer, memo } from "react";
 import * as Enroll from "../../../../style/buildings/AptEnrollment.styled";
 import { useNavigate } from "react-router-dom";
-import { reducer, initialState } from "../../../../reducer/aptBasicInfoReducer";
+import GallerySection from "./GallerySection";
+import CommunitySection from "./CommunitySection";
+import PromotionSection from "./PromotionSection";
 import PageTitle from "../../../molecule/PageTitle";
 import ProductInfoForm from "./ProductInfoSection";
-import GallerySection from "./GallerySection";
-import CommnunitySection from "./CommunitySection";
-import PromotionSection from "./PromotionSection";
+import { aptBasicInfoState } from "../../../../recoil/stateProduct";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { postBasicInfoApi } from "../../../../api/enroll";
+import { modifyDateHandler } from "../../../../util/modifyValue";
+import { ImageUploadhandler } from "../../../../util/modifyValue";
 
-type Props = {
-  setPaging: React.SetStateAction<any>;
-};
+interface BasicBuilidngInfoProps {
+  setPaging: React.Dispatch<React.SetStateAction<number>>;
+}
 
-function BasicBuilidngInfo({ setPaging }: Props) {
+function BasicBuilidngInfo({ setPaging }: BasicBuilidngInfoProps) {
   const navigation = useNavigate();
-  const [state, dispatch] = useReducer(reducer, initialState);
-  console.log(state, "리듀서");
+  const [state, setState] = useRecoilState(aptBasicInfoState);
+  const reset = useResetRecoilState(aptBasicInfoState);
   const dataIndicator = ["매물관리", "매물등록"];
 
+  const addressCity = state.address.split(" ").slice(0, 1).join(" ");
+  const addressCounty = state.address.split(" ").slice(1, 2).join(" ");
+
+  const inDate = modifyDateHandler(state.inDate, state) as string;
+
+  const addressRest =
+    state.address.split(" ").slice(2).join(" ") + " " + state.addressRest;
+
   const request = {
-    address: state.address,
-    addressRest: state.addressRest,
-    buildingCoverRatio: state.buildingCoverRatio,
-    buildingName: state.buildingName,
+    addressCity,
+    addressCounty,
+    addressRest,
+    aptName: state.buildingName,
     buildingsNum: state.buildingsNum,
+    houseHoldSum: state.houseHoldSum,
+    parkingAll: state.parkingAll,
+    parkingHouseHold: parseFloat(
+      (state.buildingsNum / state.parkingAll).toFixed(2)
+    ),
+    buildingCoverRatio: state.buildingCoverRatio,
+    floorAreaRatio: state.floorAreaRatio,
+    parkingForm: state.parkingForm,
+    doorStructure: state.doorStructure,
+    heating: state.heating,
     constructorCompany: state.constructorCompany,
     developerCompany: state.developerCompany,
-    doorStructure: state.doorStructure,
-    floorAreaRatio: state.floorAreaRatio,
-    heating: state.heating,
-    highFloor: state.highFloor,
-    inDate: state.inDate,
     lowFloor: state.lowFloor,
-    maintenanceCost: state.maintenanceCost,
-    parkingAll: state.parkingAll,
-    parkingForm: state.parkingForm,
+    highFloor: state.highFloor,
+    inDate: inDate,
+    promotionPhone: state.promotionPhone,
+    promotionSite: state.promotionSite + state.promotionRest,
+    companyHomePage: state.companyHomePage,
+    pyengTypes: state.pyengTypes,
+    contractCostPer: state.contractCostPer,
+    middleCostPer: state.middleCostPer,
+    restCpstPer: state.restCpstPer,
+    pubTransSubway: state.pubTransSubway,
+    pubTransSubwayDistance: state.pubTransSubwayDistance,
+    pubTransTrain: state.pubTransTrain,
+    pubTransTrainDistance: state.pubTransTrainDistance,
   };
-  /**
-   * totalSize는 `state.imageSize` 객체의 각 속성에 있는 배열들의 값을 더한 후,
-   * 그 합계 값을 배열로 반환합니다.
-   *
-   * @param {Object} state.imageSize - 이미지 크기 정보를 담은 객체
-   * @returns {number[]} 각 객체 내부의 배열에 있는 이미지 사이즈를 더한 합계
-   *
-   */
 
-  // 현재 탭 내부에 이미지들을 formData에 담아줄 함수
-  const ImageUploadhandler = async (
-    imageUrls: string[],
-    type: string,
-    formData: FormData
-  ) => {
-    // 배열형태의 이미지 url을 객체 형태로 formData에 넣음
-    const imageObjects = imageUrls.map((imageUrl) => ({
-      name: type,
-      url: imageUrl,
-    }));
-
-    imageUrls.forEach(async () => {
-      formData.append("img", JSON.stringify(imageObjects));
-    });
+  const typeMappings = {
+    jogamdo: "airview",
+    toosido: "3dview",
+    dongLayout: "arrangehouse",
+    aptLayout: "arrangebuildings",
+    environment: "environment",
+    communityFacilities: "community",
   };
+
+  //뒤로 버튼 이벤트 핸들러
+  const backEventHandler = () => {
+    reset();
+    navigation("/Buildings");
+  };
+
+  //다음 버튼 이벤트 핸들러
   const SubmitEventHandler = async () => {
-    let showAlert = false;
-
     /*    for (const [key, value] of Object.entries(state)) {
       if (value?.length === 0) {
         console.log(key, value);
@@ -73,7 +90,8 @@ function BasicBuilidngInfo({ setPaging }: Props) {
       }
 
       if (key === "image") {
-        const hasNonEmptyArrays = Object.values(value).every(
+        const hasNon
+        EmptyArrays = Object.values(value).every(
           (imageArray) =>
             Array.isArray(imageArray) && imageArray.every((img) => img !== "")
         );
@@ -86,22 +104,10 @@ function BasicBuilidngInfo({ setPaging }: Props) {
     }
  */
 
+    setPaging((prev: number) => prev + 1);
     const formData = new FormData();
-
-    await ImageUploadhandler(state.image.aptLayout, "aptLayout", formData);
-    await ImageUploadhandler(state.image.jogamdo, "jogamdo", formData);
-    await ImageUploadhandler(state.image.etc, "toosido", formData);
-    await ImageUploadhandler(state.image.dongLayout, "dongLayout", formData);
-    await ImageUploadhandler(
-      state.image.communityFacilities,
-      "communityFacilities",
-      formData
-    );
-
-    /* const response = await createPostApi(request, formData); */
-    if (!showAlert) {
-      setPaging((prev: number) => prev + 1);
-    }
+    await ImageUploadhandler(state.file, typeMappings, formData);
+    /*  const response = await postBasicInfoApi(request, formData); */
   };
   return (
     <Enroll.Board>
@@ -111,15 +117,12 @@ function BasicBuilidngInfo({ setPaging }: Props) {
       </PageTitle>
 
       <Enroll.Section>
-        <ProductInfoForm state={state} dispatch={dispatch} />
-        <GallerySection state={state} dispatch={dispatch} />
-        <CommnunitySection state={state} dispatch={dispatch} />
-        <PromotionSection state={state} dispatch={dispatch} />
+        <ProductInfoForm />
+        <GallerySection />
+        <CommunitySection />
+        <PromotionSection />
         <Enroll.BtnContainer>
-          <Enroll.BackBtn
-            type="button"
-            onClick={() => navigation("/Buildings")}
-          >
+          <Enroll.BackBtn type="button" onClick={backEventHandler}>
             뒤로
           </Enroll.BackBtn>
           <Enroll.SaveBtn type="button" onClick={SubmitEventHandler}>

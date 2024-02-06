@@ -6,31 +6,39 @@ import Trigger from "../atom/select/Trigger";
 import { FlexBox } from "../atom/select/Flexbox";
 import Input from "../atom/select/Input";
 import Container from "../atom/select/Container";
+import { AptBasicInfoType, FacilityStateType } from "../../types/types";
 
-interface SelectType {
+type SetterOrUpdater<T> = (value: T | ((currVal: T) => T)) => void;
+
+interface SelectType<T> {
   defaultValue: string;
-  dispatch?: React.Dispatch<any>;
   type: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  state: T;
+  setState: SetterOrUpdater<T>;
 }
 
-interface SelectContextProps {
+interface SelectContextProps<T> {
   selected: string;
   setSelected: React.Dispatch<React.SetStateAction<string>>;
   isOptionsVisible: boolean;
   toggleOptionsVisibility: () => void;
-  dispatch?: React.Dispatch<any>;
+  state: T;
   type: string;
+  setState: SetterOrUpdater<T>;
 }
 
-export const SelectContext = createContext<SelectContextProps | null>(null);
+export const SelectContext = createContext<SelectContextProps<any> | null>(
+  null
+);
 
-export const Select = ({
+export const Select = <T,>({
   defaultValue,
-  dispatch,
   type,
   children,
-}: SelectType): React.ReactElement => {
+  state,
+  setState,
+}: SelectType<T>): React.ReactElement => {
   const [selected, setSelected] = useState(defaultValue);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
 
@@ -38,21 +46,23 @@ export const Select = ({
     setIsOptionsVisible((prev) => !prev);
   };
 
-  const providerValue: SelectContextProps = {
+  const providerValue: SelectContextProps<T> = {
     selected,
     setSelected,
     isOptionsVisible,
     toggleOptionsVisibility,
-    dispatch,
+    state,
+    setState,
     type,
   };
+
   return (
     <SelectContext.Provider value={providerValue}>
       {children}
     </SelectContext.Provider>
   );
 };
-Select.FlexBox = FlexBox;
+
 Select.Option = Option;
 Select.Container = Container;
 Select.List = List;

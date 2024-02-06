@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import BasicInput from "../../component/BasicInput";
 import { AiOutlineClose } from "react-icons/ai";
+import { FaPlus } from "react-icons/fa6";
 
 export const Header = styled.div`
   box-sizing: border-box;
@@ -21,7 +22,7 @@ export const ModalTitle = styled.p`
 `;
 
 export const Content = styled.div`
-  padding: 40px 30px;
+  padding: 20px 30px;
   display: flex;
   flex-direction: column;
   gap: 40px 0;
@@ -31,16 +32,18 @@ export const ContentInner = styled.div`
   flex-direction: column;
   gap: 20px 0;
 `;
-export const InputContainer = styled.div`
+export const InputContainer = styled.div<{ $columns?: boolean }>`
   display: flex;
-  align-items: center;
-  gap: 0 20px;
+  flex-direction: ${(props) => (props.$columns ? "column" : "row")};
+  align-items: ${(props) => (props.$columns ? "flex-start" : "center")};
+  gap: ${(props) => (props.$columns ? "10px 0" : "0 20px")};
 `;
 
 export const Sectiontitle = styled.p`
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: ${({ theme }) => theme.colors.black};
+  min-width: fit-content;
 `;
 
 export const InputField = styled.div`
@@ -48,6 +51,7 @@ export const InputField = styled.div`
   align-items: center;
   gap: 0 5px;
 `;
+
 export const Input = styled(BasicInput)`
   border: none;
   font-size: 12px;
@@ -83,4 +87,43 @@ export const ConfirmBtn = styled.button`
   font-weight: 600;
   background: ${({ theme }) => theme.colors.MainColor};
   box-shadow: 1px 2px 5px -1px rgb(0 0 0 / 27%);
+`;
+export const FloorPlan = styled.div`
+  width: 200px;
+  height: 150px;
+`;
+export const ImageBox = styled.div`
+  display: flex;
+  gap: 0 10px;
+`;
+
+export const Image = styled.img`
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  object-fit: contain;
+`;
+
+export const EmptyBox = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid ${({ theme }) => theme.colors.WhiteBorder};
+  cursor: pointer;
+`;
+export const PlusIcon = styled(FaPlus)`
+  font-size: 20px;
+`;
+
+export const TextArea = styled.textarea`
+  resize: none;
+  width: 100%;
+  border: 1px solid ${({ theme }) => theme.colors.WhiteBorder};
+  padding: 10px;
+
+  &:focus {
+    outline: none;
+  }
 `;

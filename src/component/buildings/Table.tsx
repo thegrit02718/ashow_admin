@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { AptTypes } from "../../types/Tabletype";
 import * as Building from "../../style/buildings/Building.styled";
 import { FaCheck } from "react-icons/fa6";
-import Checkbox from "./CheckBox";
+import Checkbox from "../CheckBox";
 import theme from "../../style/theme";
-import { CheckboxGroup } from "./CheckboxGroup";
+import { CheckboxGroup } from "../CheckboxGroup";
 
 interface TableProps {
   data: AptTypes[];
@@ -12,7 +12,7 @@ interface TableProps {
 
 function Table({ data }: TableProps) {
   const [selectedList, setSelectedList] = useState<number[]>([]);
-  console.log(selectedList);
+
   return (
     <Building.TableWrapper>
       <Building.Table style={{ borderCollapse: "collapse" }}>

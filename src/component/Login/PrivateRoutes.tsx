@@ -15,7 +15,7 @@ export default function PrivateRoute({
    * 로그인 했을 경우 : authentication true 반환
    * 로그인 안했을 경우 : null(로그아웃 버튼 눌렀을경우 null로 설정) 반환
    */
-  if (authentication) {
+  /* if (authentication) {
     // 인증이 필요한 페이지
     if (admin === null) {
       // 로그인하지 않은 경우
@@ -36,5 +36,6 @@ export default function PrivateRoute({
       // 유저 혹은 관리자가 아닌 경우 > 로그인 페이지 / 유저일 경우 원하는 페이지 이동
       return admin !== "member" ? <Navigate to="/" /> : <Outlet />;
     }
-  }
+  } */
+  return <Outlet />;
 }

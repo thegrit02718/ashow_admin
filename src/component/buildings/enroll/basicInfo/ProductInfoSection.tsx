@@ -1,39 +1,41 @@
 import React, { useState, useReducer, useEffect } from "react";
-import { State } from "../../../../reducer/aptBasicInfoReducer";
 import * as Component from "../../../../style/buildings/AptEnrollment.styled";
 import { Select } from "../../../molecule/Select";
 import InputField from "../../../molecule/InputField";
-import CalendarComponent from "../../CalendarComponent";
+import CalendarModal from "./CalendarModal";
 import { NaverMap } from "./NaverMap";
 import SectionTitle from "../../../molecule/SectionTitle";
 import { useRecoilState } from "recoil";
 import { modalsState } from "../../../../recoil/stateModal";
 import dayjs from "dayjs";
-import { Action } from "../../../../types/Reducer";
 import "../../../../style/buildings/calendar.css";
-import { AddressModalProps } from "../../../../types/Modal";
-import { RecoilProps } from "../../../../types/Modal";
-import { AdrressState } from "../../../../recoil/stateProduct";
+import { productInfoState } from "../../../../recoil/stateSection";
+import { useSetRecoilState } from "recoil";
+import { checkProductInfoSection } from "../../../../util/dataValidation";
+import useDebounce from "../../../../hooks/useDebounce";
+import { aptBasicInfoState } from "../../../../recoil/stateProduct";
 
-interface ProductInfoForm {
-  state: State;
-  dispatch: React.Dispatch<Action>;
-}
-
-function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
+function ProductInfoForm() {
   const [modalState, setModalState] = useRecoilState(modalsState);
-  const [adrressState, setAdrressState] =
-    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
-  const address = adrressState.address.address;
+  const [state, setState] = useRecoilState(aptBasicInfoState);
+
+  const setValue = useSetRecoilState(productInfoState); // 이 페이지 섹션별 유효성 검사결과를 담은 리코일
+  const address = state.address;
   const [isPopup, setIsPopup] = useState(false);
 
-  // 리코일에서 주소 api로 등록한 주소가져오기
+  // 디바운스 함수를 활용해서 컴포넌트 내부의 Input Field 값이 들어있는지 파악하는 함수 사용
+  const debouncedCheckProductInfoSection = useDebounce({
+    value: checkProductInfoSection(state),
+    delay: 200,
+  });
+
   useEffect(() => {
-    dispatch({
-      type: "UPDATE_ADDRESS",
-      payload: address,
-    });
-  }, [address]);
+    if (debouncedCheckProductInfoSection) {
+      setValue(true);
+    } else {
+      setValue(false);
+    }
+  }, [debouncedCheckProductInfoSection]);
 
   // 주소검색 버튼 클릭 시 주소 api모달창 팝업
   const SearchEventHandler = () => {
@@ -49,14 +51,14 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
   const onChangeHandler = (value: Date) => {
     const date = dayjs(value).format("YYYY.MM");
     setIsPopup(!isPopup);
-    dispatch({ type: "UPDATE_INDATE", payload: date });
+    setState((prev: any) => ({ ...prev, inDate: date }));
   };
 
+  //세대당 주차 대수 계산
   const parkingPerUnit = (houseHoldSum: number, parkingAll: number) => {
     if (houseHoldSum == 0 || parkingAll == 0) return "0.00";
     return (houseHoldSum / parkingAll).toFixed(2);
   };
-
   return (
     <div>
       <SectionTitle>
@@ -65,13 +67,13 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
       <Component.FlexColumn>
         <Component.Grid $row="1fr 1fr">
           <Component.FlexColumn>
-            <InputField actionType="UPDATE_BUILDING_NAME" dispatch={dispatch}>
+            <InputField state={state} setState={setState} type="buildingName">
               <InputField.Title>아파트명</InputField.Title>
               <InputField.InputBox>
                 <InputField.Input />
               </InputField.InputBox>
             </InputField>
-            <InputField actionType="UPDATE_LAST_ADDRESS" dispatch={dispatch}>
+            <InputField state={state} setState={setState} type="addressRest">
               <InputField.Container>
                 <InputField.Title>주소</InputField.Title>
                 <InputField.SubTitle>
@@ -102,12 +104,12 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
           <NaverMap id="map" type="address" />
         </Component.Grid>
         <Component.Grid $row="1fr 1fr 1fr">
-          <InputField actionType="UPDATE_INDATE" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="inDate">
             <InputField.Title>입주 시기</InputField.Title>
             <InputField.InputBox>
               <Component.CalendarIconBox>
                 <Component.CalendarIcon onClick={() => setIsPopup(!isPopup)} />
-                {isPopup && <CalendarComponent onChange={onChangeHandler} />}
+                {isPopup && <CalendarModal onChange={onChangeHandler} />}
               </Component.CalendarIconBox>
               <InputField.Input
                 value={state.inDate}
@@ -116,62 +118,143 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
               />
             </InputField.InputBox>
           </InputField>
-          <InputField actionType="UPDATE_HOUSEHOLDSUM" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="houseHoldSum">
             <InputField.Title>세대 수</InputField.Title>
             <InputField.InputBox>
-              <InputField.Input />
+              <InputField.Input inputType="number" />
               <InputField.Unit>세대</InputField.Unit>
             </InputField.InputBox>
           </InputField>
-          <InputField actionType="UPDATE_BUILDINGSNUM" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="buildingsNum">
             <InputField.Title>동 수</InputField.Title>
             <InputField.InputBox>
-              <InputField.Input />
+              <InputField.Input inputType="number" />
               <InputField.Unit>개</InputField.Unit>
             </InputField.InputBox>
           </InputField>
         </Component.Grid>
+        <Component.Grid $row="1fr 1fr 1fr">
+          <InputField state={state} setState={setState} type="contractCostPer">
+            <InputField.Title>계약금</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="number" />
+              <InputField.Unit>원</InputField.Unit>
+            </InputField.InputBox>
+          </InputField>
+          <InputField state={state} setState={setState} type="middleCostPer">
+            <InputField.Title>중도금</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="number" />
+              <InputField.Unit>원</InputField.Unit>
+            </InputField.InputBox>
+          </InputField>
+          <InputField state={state} setState={setState} type="restCpstPer">
+            <InputField.Title>잔금</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="number" />
+              <InputField.Unit>원</InputField.Unit>
+            </InputField.InputBox>
+          </InputField>
+        </Component.Grid>
+        <Component.Grid $row="1fr 1fr 1fr 1fr">
+          <InputField state={state} setState={setState} type="pubTransSubway">
+            <InputField.Title>대중교통</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="text" />
+            </InputField.InputBox>
+          </InputField>
+          <InputField
+            state={state}
+            setState={setState}
+            type="pubTransSubwayDistance"
+          >
+            <InputField.Title>대중교통 거리</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="text" />
+              <InputField.Unit>km</InputField.Unit>
+            </InputField.InputBox>
+          </InputField>
+          <InputField state={state} setState={setState} type="pubTransTrain">
+            <InputField.Title>기차역</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="text" />
+            </InputField.InputBox>
+          </InputField>
+          <InputField
+            state={state}
+            setState={setState}
+            type="pubTransTrainDistance"
+          >
+            <InputField.Title>기차역 거리</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="text" />
+              <InputField.Unit>km</InputField.Unit>
+            </InputField.InputBox>
+          </InputField>
+        </Component.Grid>
         <Component.Grid $row="1fr 1fr">
-          <InputField actionType="UPDATE_AREARATIO" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="pyengTypes">
+            <InputField.Title>평형 종류</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="text" />
+            </InputField.InputBox>
+          </InputField>
+          <InputField state={state} setState={setState} type="companyHomePage">
+            <InputField.Title>홈페이지 주소</InputField.Title>
+            <InputField.InputBox>
+              <InputField.Input inputType="text" />
+            </InputField.InputBox>
+          </InputField>
+        </Component.Grid>
+        <Component.Grid $row="1fr 1fr">
+          <InputField state={state} setState={setState} type="floorAreaRatio">
             <InputField.Title>용적률</InputField.Title>
             <InputField.InputBox>
-              <InputField.Input />
+              <InputField.Input inputType="number" />
               <InputField.Unit>%</InputField.Unit>
             </InputField.InputBox>
           </InputField>
-          <InputField actionType="UPDATE_COVERRATIO" dispatch={dispatch}>
+          <InputField
+            state={state}
+            setState={setState}
+            type="buildingCoverRatio"
+          >
             <InputField.Title>건폐율</InputField.Title>
             <InputField.InputBox>
-              <InputField.Input />
+              <InputField.Input inputType="number" />
               <InputField.Unit>%</InputField.Unit>
             </InputField.InputBox>
           </InputField>
         </Component.Grid>
         <Component.Grid $row="1fr 1fr">
-          <InputField actionType="UPDATE_LOWFLOOR" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="lowFloor">
             <InputField.Title>최저/고층</InputField.Title>
             <InputField.InputBox>
               <InputField.Unit>가장 낮은 동</InputField.Unit>
-              <InputField.Input />
+              <InputField.Input inputType="number" />
               <InputField.Unit>층</InputField.Unit>
             </InputField.InputBox>
           </InputField>
-          <InputField actionType="UPDATE_HIGHFLOOR" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="highFloor">
             <InputField.InputBox>
               <InputField.Unit>가장 높은 동</InputField.Unit>
-              <InputField.Input />
+              <InputField.Input inputType="number" />
               <InputField.Unit>층</InputField.Unit>
             </InputField.InputBox>
           </InputField>
         </Component.Grid>
         <Component.Grid $row="1fr 1fr">
-          <InputField actionType="UPDATE_CONSTRUCTOR" dispatch={dispatch}>
+          <InputField
+            state={state}
+            setState={setState}
+            type="constructorCompany"
+          >
             <InputField.Title>시공사</InputField.Title>
             <InputField.InputBox>
               <InputField.Input />
             </InputField.InputBox>
           </InputField>
-          <InputField actionType="UPDATE_DEVELOPER" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="developerCompany">
             <InputField.Title>시행사</InputField.Title>
             <InputField.InputBox>
               <InputField.Input />
@@ -179,12 +262,13 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
           </InputField>
         </Component.Grid>
         <Component.Grid $row="1fr 1fr">
-          <InputField actionType="UPDATE_DOORSTRUCTURE" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="doorStructure">
             <InputField.Title>현관구조</InputField.Title>
             <Select
               defaultValue="선택하세요"
-              dispatch={dispatch}
-              type="UPDATE_DOORSTRUCTURE"
+              state={state}
+              setState={setState}
+              type="doorStructure"
             >
               <Component.FlexBox direction="row">
                 <Select.Input />
@@ -199,12 +283,13 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
               </Component.FlexBox>
             </Select>
           </InputField>
-          <InputField actionType="UPDATE_DEVELOPER" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="heating">
             <InputField.Title>난방</InputField.Title>
             <Select
               defaultValue="선택하세요"
-              dispatch={dispatch}
-              type="UPDATE_HEATING"
+              state={state}
+              setState={setState}
+              type="heating"
             >
               <Component.FlexBox direction="row">
                 <Select.Input />
@@ -222,7 +307,7 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
           </InputField>
         </Component.Grid>
         <Component.Grid $row="1fr 1fr">
-          <InputField actionType="UPDATE_PARKINGFORM" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="parkingForm">
             <InputField.Title>주차장 형태</InputField.Title>
             <Component.FlexRow>
               <InputField.Radio defaultChecked name="parking" id={1}>
@@ -236,12 +321,12 @@ function ProductInfoForm({ state, dispatch }: ProductInfoForm) {
               </InputField.Radio>
             </Component.FlexRow>
           </InputField>
-          <InputField actionType="UPDATE_PARKINGALL" dispatch={dispatch}>
+          <InputField state={state} setState={setState} type="parkingAll">
             <InputField.Title>총 주차 대수</InputField.Title>
             <InputField.Container>
               <Component.FlexRow>
                 <InputField.InputBox>
-                  <InputField.Input />
+                  <InputField.Input inputType="number" />
                   <InputField.Unit>대</InputField.Unit>
                 </InputField.InputBox>
                 <Component.UnitContainer>

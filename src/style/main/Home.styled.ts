@@ -101,4 +101,5 @@ export const ContentInner = styled.div`
   margin-top: 64px;
   padding: 45px 40px;
   overflow-y: scroll;
+  position: relative;
 `;

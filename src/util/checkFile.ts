@@ -1,11 +1,4 @@
-import { ImageSizeType } from "../reducer/aptBasicInfoReducer";
-
-/**
- * 파일 확장자를 검사해주는 함수입니다.
- * @param param
- * @returns true: 가능 확장자, false : 불가능 확장자
- *
- */
+import { ImageSizeType } from "../types/types";
 
 export const ALLOW_FILE_EXTENSION = "jpg,jpeg,png";
 export const FILE_SIZE_MAX_LIMIT = 10 * 1024 * 1024;
@@ -26,6 +19,12 @@ export const getImageSizeHandler = (imageObejct: ImageSizeType) => {
   );
 };
 
+/**
+ * 파일 확장자를 검사해주는 함수입니다.
+ * @param param
+ * @returns true: 가능 확장자, false : 불가능 확장자
+ *
+ */
 const fileExtensionValid = ({ name }: { name: string }): boolean => {
   const extension = removeFileName(name);
 

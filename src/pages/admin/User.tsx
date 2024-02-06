@@ -6,9 +6,10 @@ import { TableRow } from "../../component/atom/table/TableRow";
 import { Table } from "../../component/molecule/Table";
 import { Select } from "../../component/molecule/Select";
 import Paging from "../../component/Paging";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { sortingState } from "../../recoil/stateTableFilter";
 import { sortData } from "../../util/sortTableData";
+import { selectState } from "../../recoil/stateProduct";
 
 interface IData {
   no: number;
@@ -179,6 +180,7 @@ function User() {
   const [page, setPage] = useState<number>(1);
   const [currentPost, setCurrentPost] = useState<IData[]>(user); // 게시판 목록에 보여줄 게시글
   const { columnName, order } = useRecoilValue(sortingState);
+  const [selectedItem, setSelectedItem] = useRecoilState(selectState);
   const postPerPage = 11; // 페이지 당 게시글 개수
   const indexOfLastPost = page * postPerPage; // 현재 게시글 index
   const indexOfFirstPost = indexOfLastPost - postPerPage; // 마지막 게시글 index
@@ -192,7 +194,7 @@ function User() {
   useEffect(() => {
     if (columnName && order) {
       const sortedData = sortData(user, columnName, order);
-      console.log(sortedData, "솔팅");
+
       setUser(sortedData);
     }
   }, [columnName, order]);
@@ -220,7 +222,12 @@ function User() {
           <div>
             <Admin.SearchBox>
               <Admin.SelectBox style={{ width: 480 }}>
-                <Select defaultValue="아이디" type="UPDATE_DOORSTRUCTURE">
+                <Select
+                  defaultValue="아이디"
+                  state={selectedItem}
+                  setState={setSelectedItem}
+                  type="default"
+                >
                   <Select.Container>
                     <Select.Trigger />
                     <Select.List>

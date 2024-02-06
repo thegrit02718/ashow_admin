@@ -11,21 +11,25 @@ import Button from "../atom/inputField/Button";
 import Unit from "../atom/inputField/Unit";
 import RadioBox from "../atom/inputField/RadioBox";
 
-interface InputFieldProps extends InputContext {
+interface InputFieldProps<T> extends InputContext<T> {
   children: React.ReactNode;
 }
+type SetterOrUpdater<T> = (value: T | ((currVal: T) => T)) => void;
 
-interface InputContext {
-  actionType: string;
-  dispatch: React.Dispatch<Action>;
+interface InputContext<T> {
+  state: T;
+  setState: SetterOrUpdater<T>;
+  type?: keyof T;
 }
-export const InputContext = createContext<InputContext | null>(null);
+export const InputContext = createContext<InputContext<any> | null>(null);
 
-function InputField({ actionType, dispatch, children }: InputFieldProps) {
-  const providerValue: InputContext = {
-    actionType,
-    dispatch,
-  };
+function InputField<T>({
+  state,
+  setState,
+  type,
+  children,
+}: InputFieldProps<T>) {
+  const providerValue: InputContext<T> = { setState, state, type };
   return (
     <InputContext.Provider value={providerValue}>
       <Component.Wrapper>{children}</Component.Wrapper>

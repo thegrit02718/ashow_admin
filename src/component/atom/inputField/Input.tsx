@@ -4,7 +4,7 @@ import { InputContext } from "../../molecule/InputField";
 import { useContext } from "react";
 
 interface InputProps {
-  type?: string;
+  inputType?: string;
   placeholder?: string;
   align?: "left" | "center" | "right";
   disabled?: boolean;
@@ -12,28 +12,26 @@ interface InputProps {
 }
 
 function Input({
-  type = "text",
+  inputType = "text",
   placeholder,
   align = "left",
   disabled = false,
-  value,
 }: InputProps) {
   const context = useContext(InputContext);
+
   if (context) {
-    const { actionType, dispatch } = context;
+    const { state, setState, type } = context;
+    const changeEventHanlder = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setState((prev: any) => ({ ...prev, [type as string]: e.target.value }));
+    };
     return (
       <Component.Input
-        type={type}
-        value={value}
+        type={inputType}
+        value={type && state[type] !== 0 ? String(state[type]) : ""}
         placeholder={placeholder}
         align={align}
         disabled={disabled}
-        onChange={(e) =>
-          dispatch({
-            type: actionType,
-            payload: e.target.value,
-          })
-        }
+        onChange={(e) => changeEventHanlder(e)}
       />
     );
   }

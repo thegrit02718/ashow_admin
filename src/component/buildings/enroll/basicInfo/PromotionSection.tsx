@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { ComponentProps } from "../../../../types/types";
 import SectionTitle from "../../../molecule/SectionTitle";
 import * as Component from "../../../../style/buildings/AptEnrollment.styled";
 import InputField from "../../../molecule/InputField";
@@ -9,13 +8,20 @@ import { modalsState } from "../../../../recoil/stateModal";
 import { NaverMap } from "./NaverMap";
 import { RecoilProps } from "../../../../types/Modal";
 import { AdrressState } from "../../../../recoil/stateProduct";
+import { useSetRecoilState } from "recoil";
+import { checkPromotionInfo } from "../../../../util/dataValidation";
+import { promotionState } from "../../../../recoil/stateSection";
+import useDebounce from "../../../../hooks/useDebounce";
+import { aptBasicInfoState } from "../../../../recoil/stateProduct";
 
-function PromotionSection({ state, dispatch }: ComponentProps) {
+function PromotionSection() {
+  const [state, setState] = useRecoilState(aptBasicInfoState);
+
   const [modalState, setModalState] = useRecoilState(modalsState);
 
-  const [adrressState, setAdrressState] =
-    useRecoilState<AddressModalProps<RecoilProps>>(AdrressState);
-  const { promotionSite } = adrressState.address;
+  const { promotionSite } = state; // 홍보관 주소
+
+  //모달 팝업
   const SearchEventHandler = () => {
     setModalState({
       isOpen: true,
@@ -25,14 +31,23 @@ function PromotionSection({ state, dispatch }: ComponentProps) {
       },
     });
   };
+  const setValue = useSetRecoilState(promotionState);
 
-  // 리코일에서 주소 api로 등록한 주소가져오기
+  // 디바운스된 함수를 활용해서 컴포넌트 내부의 Input Field 값이 들어있는지 파악
+  const debouncedCheckState = useDebounce({
+    value: checkPromotionInfo(state),
+    delay: 300,
+  });
+
+  // input field에 모든 값이 들어간 경우 리코일에 boolean 값 저장
   useEffect(() => {
-    dispatch({
-      type: "UPDATE_PROMOTIONSITE",
-      payload: promotionSite,
-    });
-  }, [promotionSite]);
+    if (debouncedCheckState) {
+      setValue(true);
+    } else {
+      setValue(false);
+    }
+  }, [debouncedCheckState]);
+
   return (
     <div>
       <SectionTitle>
@@ -44,13 +59,13 @@ function PromotionSection({ state, dispatch }: ComponentProps) {
       <div>
         <Component.Grid $row="1fr 1fr">
           <Component.FlexColumn>
-            <InputField actionType="UPDATE_BUILDING_NAME" dispatch={dispatch}>
+            <InputField state={state} setState={setState} type="promotionPhone">
               <InputField.Title>홍보관 대표번호</InputField.Title>
               <InputField.InputBox>
-                <InputField.Input />
+                <InputField.Input inputType="number" />
               </InputField.InputBox>
             </InputField>
-            <InputField actionType="UPDATE_PROMOTIONREST" dispatch={dispatch}>
+            <InputField state={state} setState={setState} type="promotionRest">
               <InputField.Container>
                 <InputField.Title>주소</InputField.Title>
                 <InputField.SubTitle>

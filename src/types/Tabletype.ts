@@ -17,7 +17,6 @@ export interface AptTypes {
   id: number;
   inDate: string;
   lowHighFloor: string;
-  maintenanceCost: string;
   name: string;
   parkingAll: number;
   parkingForm: string;

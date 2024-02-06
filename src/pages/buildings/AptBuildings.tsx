@@ -59,7 +59,7 @@ function Buildings() {
             </Building.SearchButton>
           </Building.SearchContainer>
           <Building.Utils>
-            <Building.UtilsButton onClick={() => navigate("/Buildings/Enroll")}>
+            <Building.UtilsButton onClick={() => navigate("/buildings/enroll")}>
               <Building.PlusIcon /> 매물 등록
             </Building.UtilsButton>
             <Building.UtilsButton>삭제</Building.UtilsButton>

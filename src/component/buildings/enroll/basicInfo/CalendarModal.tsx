@@ -1,5 +1,5 @@
 import React from "react";
-import * as Enroll from "../../style/buildings/AptEnrollment.styled";
+import * as Enroll from "../../../../style/buildings/AptEnrollment.styled";
 import Calendar from "react-calendar";
 import dayjs from "dayjs";
 

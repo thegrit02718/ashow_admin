@@ -1,22 +1,28 @@
 import React, { useEffect } from "react";
-import { State } from "../../../../reducer/aptBasicInfoReducer";
-import { Action } from "../../../../types/Reducer";
-import * as Tab from "../../../../style/component/tab/Tabs.styled";
 import Tabs from "../../../molecule/Tabs";
-import EnrollImagePanel from "./EnrollImagePanel";
 import SectionTitle from "../../../molecule/SectionTitle";
-import { ComponentProps } from "../../../../types/types";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { modalsState } from "../../../../recoil/stateModal";
-import { reducer } from "../../../../reducer/FacilityInfoReducer";
-import { initialState } from "../../../../reducer/FacilityInfoReducer";
 import { facilityState } from "../../../../recoil/stateProduct";
-import { FacilState } from "../../../../reducer/FacilityInfoReducer";
+import { useSetRecoilState } from "recoil";
+import { checkCommunityInfo } from "../../../../util/dataValidation";
+import { communityState } from "../../../../recoil/stateSection";
+import useDebounce from "../../../../hooks/useDebounce";
+import { aptBasicInfoState } from "../../../../recoil/stateProduct";
 
-function CommunitySection({ state, dispatch }: ComponentProps) {
+function CommunitySection() {
+  const [state, setState] = useRecoilState(aptBasicInfoState);
   const [modalState, setModalState] = useRecoilState(modalsState);
-  const { total } = useRecoilValue(facilityState);
-  const community: FacilState[] = state.communityFacilities;
+  const facilityList = useRecoilValue(facilityState);
+  const setValue = useSetRecoilState(communityState);
+
+  // 디바운스된 함수를 활용해서 컴포넌트 내부의 Input Field 값이 들어있는지 파악
+  const debouncedCheckState = useDebounce({
+    value: checkCommunityInfo(state),
+    delay: 300,
+  });
+
+  //모달팝업
   const modalEventHandler = () => {
     setModalState((prev) => ({
       ...prev,
@@ -25,13 +31,16 @@ function CommunitySection({ state, dispatch }: ComponentProps) {
       props: {},
     }));
   };
+
+  // input field에 모든 값이 들어간 경우 리코일에 boolean 값 저장
   useEffect(() => {
-    console.log(typeof total);
-    if (Object.keys(total).length > 0) {
-      dispatch({ type: "UPDATE_COMMUNITY_FACILITY", payload: total });
+    if (debouncedCheckState) {
+      setValue(true);
+    } else {
+      setValue(false);
     }
-  }, [total]);
-  const category = "communityFacilities";
+  }, [debouncedCheckState]);
+
   return (
     <div>
       <SectionTitle>
@@ -46,13 +55,9 @@ function CommunitySection({ state, dispatch }: ComponentProps) {
         </SectionTitle.Button>
       </SectionTitle>
 
-      <Tabs defaultValue={1}>
+      <Tabs setState={setState} state={state}>
         <Tabs.Panel value={1}>
-          <EnrollImagePanel
-            dispatch={dispatch}
-            state={state}
-            category={category}
-          />
+          <Tabs.ImagePanel category="communityFacilities" />
         </Tabs.Panel>
       </Tabs>
     </div>

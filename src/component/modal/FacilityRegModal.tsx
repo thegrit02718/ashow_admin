@@ -8,15 +8,16 @@ import { useRecoilState, useResetRecoilState } from "recoil";
 import { modalsState } from "../../recoil/stateModal";
 import { facilityState } from "../../recoil/stateProduct";
 import { FacilState } from "../../reducer/FacilityInfoReducer";
+import { aptBasicInfoState } from "../../recoil/stateProduct";
 
 function FacilityRegModal() {
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [modalState, setModalState] = useRecoilState(facilityState);
+  /*   const [state, dispatch] = useReducer(reducer, initialState); */
+  const [state, setState] = useRecoilState(facilityState);
   const reset = useResetRecoilState(modalsState);
   // Recoil Callback을 사용하여 리렌더링 없이 reset 호출
 
   const submitHandler = () => {
-    setModalState((prev: any) => ({
+    /* setModalState((prev: any) => ({
       ...prev,
       total: {
         facilityType: state.facilityType,
@@ -25,7 +26,7 @@ function FacilityRegModal() {
         facilityName: state.facilityName,
         description: state.description,
       },
-    }));
+    })); */
     reset();
   };
   return (
@@ -40,8 +41,9 @@ function FacilityRegModal() {
             <Modal.SelectBox>
               <Select
                 defaultValue="구분"
-                dispatch={dispatch}
-                type="UPDATE_FACILITYTYPE"
+                state={state}
+                setState={setState}
+                type="communityFacilities"
               >
                 <Select.Trigger />
                 <Select.List>
@@ -52,19 +54,19 @@ function FacilityRegModal() {
               </Select>
             </Modal.SelectBox>
 
-            <InputField actionType="UPDATE_BLOCK" dispatch={dispatch}>
+            <InputField state={state} setState={setState} type="block">
               <InputField.InputBox>
                 <InputField.Input />
                 <InputField.Unit>동</InputField.Unit>
               </InputField.InputBox>
             </InputField>
-            <InputField actionType="UPDATE_FLOOR" dispatch={dispatch}>
+            <InputField state={state} setState={setState} type="floor">
               <InputField.InputBox>
                 <InputField.Input />
                 <InputField.Unit>층</InputField.Unit>
               </InputField.InputBox>
             </InputField>
-            <InputField actionType="UPDATE_FAICILITYNAME" dispatch={dispatch}>
+            <InputField state={state} setState={setState} type="facilityName">
               <InputField.InputBox>
                 <InputField.Input placeholder="커뮤니티 시설명" />
               </InputField.InputBox>
@@ -81,10 +83,7 @@ function FacilityRegModal() {
               "해당 커뮤니티 시설에 대한 간단한 설명을 입력해 주세요. \n예시) 입주민들이 이용하는 쾌적한 분위기의 커뮤니티 공간"
             }
             onChange={(e) =>
-              dispatch({
-                type: "UPDATE_DESCRIPTION",
-                payload: e.target.value,
-              })
+              setState((prev) => ({ ...prev, description: e.target.value }))
             }
           ></Modal.Textarea>
         </Modal.Container>
